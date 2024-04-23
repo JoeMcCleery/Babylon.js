@@ -347,6 +347,14 @@ export enum PhysicsMotionType {
 }
 
 /**
+ * The body sleep state.
+ */
+export enum PhysicsActivationState {
+    ACTIVE,
+    INACTIVE,
+}
+
+/**
  * Controls the body sleep mode.
  */
 export enum PhysicsActivationControl {
