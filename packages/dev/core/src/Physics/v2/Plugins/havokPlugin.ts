@@ -7,6 +7,7 @@ import {
     PhysicsConstraintAxis,
     PhysicsConstraintAxisLimitMode,
     PhysicsEventType,
+    PhysicsActivationState,
     PhysicsActivationControl,
 } from "../IPhysicsEnginePlugin";
 import type {
@@ -834,6 +835,29 @@ export class HavokPlugin implements IPhysicsEnginePluginV2 {
                 this._hknp.HP_Body_SetActivationControl(body._pluginData.hpBodyId, this._hknp.ActivationControl.SIMULATION_CONTROLLED);
                 break;
         }
+    }
+
+    /**
+     * Get the current activation state of a body.
+     *
+     * @param body - The physics body to get the activation state from.
+     * @param instanceIndex - The index of the instance to get the activation state of. If not specified, the activation state of the first instance will be returned.
+     * @returns The activation state of the physics body.
+     *
+     * This method is useful for getting the activation state of a body in a physics engine.
+     * The activation state is also known as the sleep state of the physics body.
+     * When a body is inactive it is excluded from the physics simulation until an external force is applied.
+     */
+    public getActivationState(body: PhysicsBody, instanceIndex?: number): PhysicsActivationState {
+        const pluginRef = this._getPluginReference(body, instanceIndex);
+        const state = this._hknp.HP_Body_GetActivationState(pluginRef.hpBodyId)[1];
+        switch (state[1]) {
+            case this._hknp.ActivationState.ACTIVE:
+                return PhysicsActivationState.ACTIVE;
+            case this._hknp.ActivationState.INACTIVE:
+                return PhysicsActivationState.INACTIVE;
+        }
+        throw new Error("Unknown activation state: " + state);
     }
 
     private _internalComputeMassProperties(pluginData: BodyPluginData): any[] {
