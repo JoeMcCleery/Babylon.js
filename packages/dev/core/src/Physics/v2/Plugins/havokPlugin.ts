@@ -851,7 +851,7 @@ export class HavokPlugin implements IPhysicsEnginePluginV2 {
     public getActivationState(body: PhysicsBody, instanceIndex?: number): PhysicsActivationState {
         const pluginRef = this._getPluginReference(body, instanceIndex);
         const state = this._hknp.HP_Body_GetActivationState(pluginRef.hpBodyId)[1];
-        switch (state[1]) {
+        switch (state) {
             case this._hknp.ActivationState.ACTIVE:
                 return PhysicsActivationState.ACTIVE;
             case this._hknp.ActivationState.INACTIVE:
