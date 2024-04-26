@@ -2,6 +2,7 @@ import type { Nullable } from "../types";
 import type { IPipelineContext } from "./IPipelineContext";
 import type { ShaderProcessingContext } from "./Processors/shaderProcessingOptions";
 import { WebGLPipelineContext } from "./WebGL/webGLPipelineContext";
+import type { _loadFile } from "./abstractEngine.functions";
 import { _ConcatenateShader } from "./abstractEngine.functions";
 
 /**
@@ -16,6 +17,7 @@ export interface IThinEngineStateObject {
     _createShaderProgramInjection?: typeof _createShaderProgram;
     createRawShaderProgramInjection?: typeof createRawShaderProgram;
     createShaderProgramInjection?: typeof createShaderProgram;
+    loadFileInjection?: typeof _loadFile;
     cachedPipelines: { [name: string]: IPipelineContext };
 }
 /**
@@ -45,7 +47,8 @@ export function getStateObject(context: WebGLContext): IThinEngineStateObject {
             return singleStateObject;
         }
         state = {
-            _webGLVersion: context instanceof WebGL2RenderingContext ? 2 : 1,
+            // use feature detection. instanceof returns false. This only exists on WebGL2 context
+            _webGLVersion: (context as WebGL2RenderingContext).TEXTURE_BINDING_3D ? 2 : 1,
             _context: context,
             cachedPipelines: {},
         };
@@ -54,8 +57,8 @@ export function getStateObject(context: WebGLContext): IThinEngineStateObject {
     return state;
 }
 /**
- *
- * @param context @internal
+ * Remove the state object that belongs to the specific context
+ * @param context the context that is being
  */
 export function deleteStateObject(context: WebGLContext): void {
     _stateObject.delete(context);
